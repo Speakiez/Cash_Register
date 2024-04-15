@@ -20,9 +20,13 @@ purchaseButton.addEventListener("click", () => {
     if (!inputElement.value) {
         alert("Please input a valid number");
         return;
+    } else if (inputElement.value < price) {
+        alert("Customer does not have enough money to purchase the item");
+        return;
     }
-    
-    cash = inputElement.value;
+
+    cash = parseInt(inputElement.value);
     inputElement.value = "";
-    console.log(cash);
+    console.log("Starting cash: " + cash);
+    console.log("End cash: " + (cash - price));
 });
