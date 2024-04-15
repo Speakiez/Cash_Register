@@ -1,6 +1,7 @@
 const inputContainer = document.querySelector(".input-container");
 const inputElement = document.getElementById("input");
 const purchaseButton = document.querySelector(".purchase-button");
+const costSpan = document.querySelector(".cost-indicator");
 
 let cash;
 let price = 1.87;
@@ -15,6 +16,10 @@ let cid = [
   ["TWENTY", 60],
   ["ONE HUNDRED", 100]
 ];
+
+window.addEventListener("load", () => {
+    costSpan.textContent += price;
+});
 
 purchaseButton.addEventListener("click", () => {
     if (!inputElement.value) {
