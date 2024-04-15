@@ -4,7 +4,7 @@ const purchaseButton = document.querySelector(".purchase-button");
 const costSpan = document.querySelector(".cost-indicator");
 
 let cash;
-let price = 1.87;
+let price = 3.26;
 let cid = [
   ["PENNY", 1.01],
   ["NICKEL", 2.05],
@@ -17,11 +17,15 @@ let cid = [
   ["ONE HUNDRED", 100]
 ];
 
+const getChange = (x, y) => Number((x - y).toFixed(2));
+
 window.addEventListener("load", () => {
-    costSpan.textContent += price;
+    costSpan.textContent += `Price: $${price}`;
 });
 
 purchaseButton.addEventListener("click", () => {
+    cash = Number(inputElement.value);
+
     if (!inputElement.value) {
         alert("Please input a valid number");
         return;
@@ -30,8 +34,7 @@ purchaseButton.addEventListener("click", () => {
         return;
     }
 
-    cash = parseInt(inputElement.value);
+    console.log(cash);
+    console.log(getChange(cash, price));
     inputElement.value = "";
-    console.log("Starting cash: " + cash);
-    console.log("End cash: " + (cash - price));
 });
