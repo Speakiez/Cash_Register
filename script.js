@@ -4,6 +4,7 @@ const outputContainer = document.querySelector(".output-container");
 const outputSpan = document.querySelector(".output-span");
 const purchaseButton = document.querySelector(".purchase-button");
 const priceSpan = document.querySelector(".price-indicator");
+const cidElement = document.querySelector(".cid-element");
 
 const baseCID = [
     ["PENNY", 0.01],
@@ -48,14 +49,22 @@ const changeArrayToString = (changeArray) => {
         .join("<br>");
 };
 
+const updateCashInRegisterDisplay = () => {
+    const cashInRegisterStr = changeArrayToString(cid); 
+    cidElement.innerHTML = `
+    <strong>Change in drawer:<br/></strong>
+    ${cashInRegisterStr}
+    `;
+}
+
 const updateChangeDisplay = (cashFromRegister) => {
     const cashFromRegisterStr = changeArrayToString(cashFromRegister);
     const totalCID = getTotalCID();
 
     if (cash === totalCID + price) {
-        outputSpan.innerHTML = `Status: CLOSED <br>` + cashFromRegisterStr;
+        outputSpan.innerHTML = `Status: CLOSED <br/>` + cashFromRegisterStr;
     } else {
-        outputSpan.innerHTML = `Status: OPEN <br>` + cashFromRegisterStr;
+        outputSpan.innerHTML = `Status: OPEN <br/>` + cashFromRegisterStr;
     }
 };
 
@@ -63,7 +72,7 @@ const updateCashInRegister = (change) => {
     for (const changeArr of change) {
         for (const cidArr of cid) {
             if (cidArr.includes(changeArr[0])) {
-                cidArr[1] = cidArr[1] - changeArr[1];
+                cidArr[1] = cleanFloat(cidArr[1] - changeArr[1]);
             }
         } 
     }
@@ -76,7 +85,9 @@ const takeCashfromRegister = (change) => {
         if (cleanFloat(change - currentDenom[1]) >= 0) {
             const exactDenom = currentDenom.slice();
 
-            while ((exactDenom[1] + currentDenom[1] - 0.01) < change) {
+            while (
+                (exactDenom[1] + currentDenom[1] - 0.01) < change 
+             && (exactDenom[1] + currentDenom[1] - 0.01) < cid[baseCID.indexOf(currentDenom)][1]) {
                 exactDenom[1] = cleanFloat(exactDenom[1] + currentDenom[1]);
             }
             
@@ -84,7 +95,7 @@ const takeCashfromRegister = (change) => {
             change = cleanFloat(change - exactDenom[1]);
         }
     }
-
+    
     return cashFromRegister;
 };
 
@@ -108,9 +119,11 @@ purchaseButton.addEventListener("click", () => {
 
     updateChangeDisplay(change);
     updateCashInRegister(change);
+    updateCashInRegisterDisplay();
     inputElement.value = "";
 });
 
 window.addEventListener("load", () => {
     priceSpan.textContent += `Price: $${price}`;
+    updateCashInRegisterDisplay();
 });
