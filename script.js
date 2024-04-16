@@ -33,7 +33,14 @@ let cid = [
 
 const cleanFloat = float => parseFloat((float).toFixed(2));
 
-const updateCashRegister = (cashFromRegister) => {
+const changeArrayToString = (changeArray) => {
+    return changeArray
+        .map((currentArray) => `${currentArray[0]}: $${currentArray[1]}`)
+        .join("<br>");
+};
+
+const updateChangeDisplay = (cashFromRegister) => {
+    const cashFromRegisterStr = changeArrayToString(cashFromRegister);
     const totalCID = cleanFloat(
         cid.slice()
         .reduce(
@@ -46,11 +53,21 @@ const updateCashRegister = (cashFromRegister) => {
     } else if (cash > totalCID + price) {
         outputSpan.textContent = "Status: INSUFFICIENT_FUNDS";
     } else if (cash === totalCID + price) {
-        outputSpan.innerHTML = `Status: CLOSED <br>` + cashFromRegister;
+        outputSpan.innerHTML = `Status: CLOSED <br>` + cashFromRegisterStr;
     } else {
-        outputSpan.innerHTML = `Status: OPEN <br>` + cashFromRegister;
+        outputSpan.innerHTML = `Status: OPEN <br>` + cashFromRegisterStr;
     }
 };
+
+const updateCashInRegister = (change) => {
+    for (const changeArr of change) {
+        for (const cidArr of cid) {
+            if (cidArr.includes(changeArr[0])) {
+                cidArr[1] = cidArr[1] - changeArr[1];
+            }
+        } 
+    }
+}
 
 const takeCashfromRegister = (change) => {
     const cashFromRegister = [];
@@ -68,11 +85,7 @@ const takeCashfromRegister = (change) => {
         }
     }
 
-    const cashFromRegisterStr = cashFromRegister
-        .map((currentArray) => `${currentArray[0]}: $${currentArray[1]}`)
-        .join("<br>");
-
-    return cashFromRegisterStr;
+    return cashFromRegister;
 };
 
 purchaseButton.addEventListener("click", () => {
@@ -85,9 +98,10 @@ purchaseButton.addEventListener("click", () => {
     }
 
     cash = Number(inputElement.value);
-    updateCashRegister(
-        takeCashfromRegister(cleanFloat(cash - price))
-    );
+    let change = takeCashfromRegister(cleanFloat(cash - price));
+
+    updateCashInRegister(change);
+    updateChangeDisplay(change);
     inputElement.value = "";
 });
 
