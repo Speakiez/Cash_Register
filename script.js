@@ -1,5 +1,7 @@
 const inputContainer = document.querySelector(".input-container");
 const inputElement = document.getElementById("input");
+const outputContainer = document.querySelector(".output-container");
+const outputSpan = document.querySelector(".output-span");
 const purchaseButton = document.querySelector(".purchase-button");
 const costSpan = document.querySelector(".cost-indicator");
 
@@ -30,6 +32,7 @@ const getTotalCID = cid => cleanFloat(
 const updateCashRegister = (change) => {
     const totalCID = getTotalCID(cid);
     
+    outputSpan.textContent = `$${totalCID}`;
     return totalCID;
 };
 
@@ -47,7 +50,7 @@ purchaseButton.addEventListener("click", () => {
     
     console.log(cash);
     console.log(change);
-    console.log(takeMoneyFromCID(change));
+    console.log(updateCashRegister(change));
     inputElement.value = "";
 });
 
