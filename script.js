@@ -3,7 +3,7 @@ const inputElement = document.getElementById("input");
 const outputContainer = document.querySelector(".output-container");
 const outputSpan = document.querySelector(".output-span");
 const purchaseButton = document.querySelector(".purchase-button");
-const costSpan = document.querySelector(".cost-indicator");
+const priceSpan = document.querySelector(".price-indicator");
 
 let cash;
 let change;
@@ -32,8 +32,17 @@ const getTotalCID = cid => cleanFloat(
 const updateCashRegister = (change) => {
     const totalCID = getTotalCID(cid);
     
-    outputSpan.textContent = `$${totalCID}`;
-    return totalCID;
+    if (cash === price) {
+        outputSpan.textContent = "No change due - customer paid with exact cash";
+    } else if (cash > totalCID + price) {
+        outputSpan.textContent = "Status: INSUFFICIENT_FUNDS";
+    } else if (cash === totalCID + price) {
+        outputSpan.textContent = "Status: CLOSED";
+    } else {
+        outputSpan.textContent = "Status: OPEN";
+    }
+
+    return totalCID + price;
 };
 
 purchaseButton.addEventListener("click", () => {
@@ -55,5 +64,5 @@ purchaseButton.addEventListener("click", () => {
 });
 
 window.addEventListener("load", () => {
-    costSpan.textContent += `Price: $${price}`;
+    priceSpan.textContent += `Price: $${price}`;
 });
