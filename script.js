@@ -3,19 +3,8 @@ const inputElement = document.getElementById("input");
 const purchaseButton = document.querySelector(".purchase-button");
 const costSpan = document.querySelector(".cost-indicator");
 
-const baseCID = [
-    ["PENNY", 0.01],
-    ["NICKEL", 0.05],
-    ["DIME", 0.1],
-    ["QUARTER", 0.25],
-    ["ONE", 1],
-    ["FIVE", 5],
-    ["TEN", 10],
-    ["TWENTY", 20],
-    ["ONE HUNDRED", 100]
-];
-
 let cash;
+let change;
 let price = 3.26;
 let cid = [
     ["PENNY", 1.01],
@@ -29,15 +18,22 @@ let cid = [
     ["ONE HUNDRED", 100]
 ];
 
-const getChange = (x, y) => Number((x - y).toFixed(2));
+const cleanFloat = float => parseFloat((float).toFixed(2));
 
-window.addEventListener("load", () => {
-    costSpan.textContent += `Price: $${price}`;
-});
+const getTotalCID = cid => cleanFloat(
+    cid.slice()
+    .reduce(
+        (total, currentArr) => total + currentArr[1]
+    , 0)
+);
+
+const updateCashRegister = (change) => {
+    const totalCID = getTotalCID(cid);
+    
+    return totalCID;
+};
 
 purchaseButton.addEventListener("click", () => {
-    cash = Number(inputElement.value);
-
     if (!inputElement.value) {
         alert("Please input a valid number");
         return;
@@ -46,7 +42,15 @@ purchaseButton.addEventListener("click", () => {
         return;
     }
 
+    cash = Number(inputElement.value);
+    change = cleanFloat(cash - price);
+    
     console.log(cash);
-    console.log(getChange(cash, price));
+    console.log(change);
+    console.log(takeMoneyFromCID(change));
     inputElement.value = "";
+});
+
+window.addEventListener("load", () => {
+    costSpan.textContent += `Price: $${price}`;
 });
