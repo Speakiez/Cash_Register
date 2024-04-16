@@ -5,8 +5,19 @@ const outputSpan = document.querySelector(".output-span");
 const purchaseButton = document.querySelector(".purchase-button");
 const priceSpan = document.querySelector(".price-indicator");
 
+const baseCID = [
+    ["PENNY", 0.01],
+    ["NICKEL", 0.05],
+    ["DIME", 0.1],
+    ["QUARTER", 0.25],
+    ["ONE", 1],
+    ["FIVE", 5],
+    ["TEN", 10],
+    ["TWENTY", 20],
+    ["ONE HUNDRED", 100]
+]
+
 let cash;
-let change;
 let price = 3.26;
 let cid = [
     ["PENNY", 1.01],
@@ -22,27 +33,46 @@ let cid = [
 
 const cleanFloat = float => parseFloat((float).toFixed(2));
 
-const getTotalCID = cid => cleanFloat(
-    cid.slice()
-    .reduce(
-        (total, currentArr) => total + currentArr[1]
-    , 0)
-);
-
-const updateCashRegister = (change) => {
-    const totalCID = getTotalCID(cid);
+const updateCashRegister = (cashFromRegister) => {
+    const totalCID = cleanFloat(
+        cid.slice()
+        .reduce(
+            (total, currentArray) => total + currentArray[1]
+        , 0)
+    );
     
     if (cash === price) {
         outputSpan.textContent = "No change due - customer paid with exact cash";
     } else if (cash > totalCID + price) {
         outputSpan.textContent = "Status: INSUFFICIENT_FUNDS";
     } else if (cash === totalCID + price) {
-        outputSpan.textContent = "Status: CLOSED";
+        outputSpan.innerHTML = `Status: CLOSED <br>` + cashFromRegister;
     } else {
-        outputSpan.textContent = "Status: OPEN";
+        outputSpan.innerHTML = `Status: OPEN <br>` + cashFromRegister;
+    }
+};
+
+const takeCashfromRegister = (change) => {
+    const cashFromRegister = [];
+
+    for (const currentDenom of baseCID.toReversed()) {
+        if (cleanFloat(change - currentDenom[1]) >= 0) {
+            const exactDenom = currentDenom.slice();
+
+            while ((exactDenom[1] + currentDenom[1] - 0.01) < change) {
+                exactDenom[1] = cleanFloat(exactDenom[1] + currentDenom[1]);
+            }
+            
+            cashFromRegister.push(exactDenom);
+            change = cleanFloat(change - exactDenom[1]);
+        }
     }
 
-    return totalCID + price;
+    const cashFromRegisterStr = cashFromRegister
+        .map((currentArray) => `${currentArray[0]}: $${currentArray[1]}`)
+        .join("<br>");
+
+    return cashFromRegisterStr;
 };
 
 purchaseButton.addEventListener("click", () => {
@@ -55,11 +85,9 @@ purchaseButton.addEventListener("click", () => {
     }
 
     cash = Number(inputElement.value);
-    change = cleanFloat(cash - price);
-    
-    console.log(cash);
-    console.log(change);
-    console.log(updateCashRegister(change));
+    updateCashRegister(
+        takeCashfromRegister(cleanFloat(cash - price))
+    );
     inputElement.value = "";
 });
 
