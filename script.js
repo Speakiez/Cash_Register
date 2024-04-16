@@ -90,12 +90,15 @@ const takeCashfromRegister = (change) => {
              && (exactDenom[1] + currentDenom[1] - 0.01) < cid[baseCID.indexOf(currentDenom)][1]) {
                 exactDenom[1] = cleanFloat(exactDenom[1] + currentDenom[1]);
             }
-            
-            cashFromRegister.push(exactDenom);
-            change = cleanFloat(change - exactDenom[1]);
+            if (exactDenom[1] > cid.at(baseCID.indexOf(currentDenom))[1]) {
+                console.log(exactDenom[1]);
+            } else {
+                cashFromRegister.push(exactDenom);                 
+                change = cleanFloat(change - exactDenom[1]);
+            }
         }
     }
-    
+
     return cashFromRegister;
 };
 
@@ -103,13 +106,13 @@ purchaseButton.addEventListener("click", () => {
     if (!inputElement.value) {
         alert("Please input a valid number");
         return;
-    } else if (inputElement.value < price) {
+    } else if (Number(inputElement.value) < price) {
         alert("Customer does not have enough money to purchase the item");
         return;
-    } else if (inputElement.value === price) {
+    } else if (Number(inputElement.value) === price) {
         outputSpan.textContent = "No change due - customer paid with exact cash";
         return;
-    } else if (inputElement.value > getTotalCID() + price) {
+    } else if (Number(inputElement.value) > cleanFloat(getTotalCID() + price)) {
         outputSpan.textContent = "Status: INSUFFICIENT_FUNDS";
         return;
     }
