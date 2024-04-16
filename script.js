@@ -33,6 +33,15 @@ let cid = [
 
 const cleanFloat = float => parseFloat((float).toFixed(2));
 
+const getTotalCID = () => {
+    return cleanFloat(
+        cid.slice()
+        .reduce(
+            (total, currentArray) => total + currentArray[1]
+        , 0)
+    );
+}
+
 const changeArrayToString = (changeArray) => {
     return changeArray
         .map((currentArray) => `${currentArray[0]}: $${currentArray[1]}`)
@@ -41,18 +50,9 @@ const changeArrayToString = (changeArray) => {
 
 const updateChangeDisplay = (cashFromRegister) => {
     const cashFromRegisterStr = changeArrayToString(cashFromRegister);
-    const totalCID = cleanFloat(
-        cid.slice()
-        .reduce(
-            (total, currentArray) => total + currentArray[1]
-        , 0)
-    );
-    
-    if (cash === price) {
-        outputSpan.textContent = "No change due - customer paid with exact cash";
-    } else if (cash > totalCID + price) {
-        outputSpan.textContent = "Status: INSUFFICIENT_FUNDS";
-    } else if (cash === totalCID + price) {
+    const totalCID = getTotalCID();
+
+    if (cash === totalCID + price) {
         outputSpan.innerHTML = `Status: CLOSED <br>` + cashFromRegisterStr;
     } else {
         outputSpan.innerHTML = `Status: OPEN <br>` + cashFromRegisterStr;
@@ -95,13 +95,19 @@ purchaseButton.addEventListener("click", () => {
     } else if (inputElement.value < price) {
         alert("Customer does not have enough money to purchase the item");
         return;
+    } else if (inputElement.value === price) {
+        outputSpan.textContent = "No change due - customer paid with exact cash";
+        return;
+    } else if (inputElement.value > getTotalCID() + price) {
+        outputSpan.textContent = "Status: INSUFFICIENT_FUNDS";
+        return;
     }
 
     cash = Number(inputElement.value);
     let change = takeCashfromRegister(cleanFloat(cash - price));
 
-    updateCashInRegister(change);
     updateChangeDisplay(change);
+    updateCashInRegister(change);
     inputElement.value = "";
 });
 
