@@ -11,6 +11,7 @@ const cidElement = document.querySelector(".cid-element");
 let cash;
 let change;
 let outputMessage;
+let denominationsArray;
 let price = 19.5;
 let cid = [
     ["PENNY", 0.01], 
@@ -23,6 +24,10 @@ let cid = [
     ["TWENTY", 0], 
     ["ONE HUNDRED", 0]
 ];
+
+let totalCID = 
+        cid.slice()
+        .reduce((totalDenom, currentDenom) => totalDenom + currentDenom[1], 0);
 
 // Function Declarations //
 
@@ -42,18 +47,17 @@ const validateUserInput = (userInput) => {
 
     cash = userInput;
     change = cleanFloat(cash - price);
+    denominationsArray = getValidDenominations(change);
 
     if (change === 0) {
         outputMessage = "No change due - customer paid with exact cash";
-    } else if (!getValidDenominations(change)) {
+    } else if (!denomArray) {
         outputMessage = "Status: INSUFFICIENT_FUNDS";
+    } else if (denomArray[1] === totalCID) {
+        outputMessage = "Status: CLOSED";
     } else {
-        outputMessage = "Test";
+        outputMessage = "Status: OPEN";
     }
-    
-    console.log(cash);
-    console.log(change);
-    console.log(outputMessage);
 
     inputElement.value = "";
 };
@@ -75,7 +79,7 @@ const getValidDenominations = (changeCopy) => {
         .reduce((totalDenom, currentDenom) => totalDenom + currentDenom[1], 0);
     
     if (totalDenominations >= change) {
-        return validDenominations;
+        return [validDenominations, totalDenominations];
     }
 };
 
