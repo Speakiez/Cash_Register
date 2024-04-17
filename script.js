@@ -55,6 +55,12 @@ const updateDrawerDisplay = () => {
         .join(`<br/>`);
 };
 
+const updateOutputDisplay = (outputMessage, denomArray) => {
+    outputSpan.innerHTML = `${outputMessage}<br/>` + [...denomArray[0]]
+        .map((denomination) => `${denomination[0]}: $${denomination[1]}`)
+        .join(`<br/>`);
+};
+
 const isUserInputValid = (userInput) => {
     inputElement.value = "";
 
@@ -67,6 +73,23 @@ const isUserInputValid = (userInput) => {
     }
 
     return true;
+};
+
+const getValuesFromUserInput = (userInput) => {
+    cash = cleanFloat(userInput);
+    change = cleanFloat(cash - price);
+    denominationsArray = getValidDenominations(change);
+    totalCID = getTotalCID();
+
+    if (change === 0) {
+        outputMessage = "No change due - customer paid with exact cash";
+    } else if (!denominationsArray) {
+        outputMessage = "Status: INSUFFICIENT_FUNDS";
+    } else if (denominationsArray[1] === totalCID) {
+        outputMessage = "Status: CLOSED";
+    } else {
+        outputMessage = "Status: OPEN";
+    }
 };
 
 const getValidDenominations = (changeCopy) => {
@@ -105,23 +128,6 @@ const getValidDenominations = (changeCopy) => {
     }
 };
 
-const getValuesFromUserInput = (userInput) => {
-    cash = cleanFloat(userInput);
-    change = cleanFloat(cash - price);
-    denominationsArray = getValidDenominations(change);
-    totalCID = getTotalCID();
-
-    if (change === 0) {
-        outputMessage = "No change due - customer paid with exact cash";
-    } else if (!denominationsArray) {
-        outputMessage = "Status: INSUFFICIENT_FUNDS";
-    } else if (denominationsArray[1] === totalCID) {
-        outputMessage = "Status: CLOSED";
-    } else {
-        outputMessage = "Status: OPEN";
-    }
-};
-
 // Event Handling //
 
 purchaseButton.addEventListener("click", () => {
@@ -130,7 +136,7 @@ purchaseButton.addEventListener("click", () => {
     if (!isUserInputValid(userInput)) return;
 
     getValuesFromUserInput(userInput);
-
+    updateOutputDisplay(outputMessage, denominationsArray);
     console.log(cash);
     console.log(change);
     console.log(totalCID);
