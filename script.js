@@ -39,7 +39,6 @@ let totalCID;
 let outputMessage;
 let denominationsArray = [];
 
-
 // Function Declarations //
 
 const cleanFloat = float => parseFloat((float).toFixed(2));
@@ -56,9 +55,24 @@ const updateDrawerDisplay = () => {
 };
 
 const updateOutputDisplay = (outputMessage, denomArray) => {
+    if (!denomArray) {
+        outputSpan.innerHTML = outputMessage;
+        return;
+    }
+
     outputSpan.innerHTML = `${outputMessage}<br/>` + [...denomArray[0]]
         .map((denomination) => `${denomination[0]}: $${denomination[1]}`)
         .join(`<br/>`);
+};
+
+const updateValues = (denomArray) => {
+    if (!denomArray) return;
+
+    [...denomArray[0]].reverse().forEach(currentDenom => {
+        cid.forEach((currentCID => {
+            if (currentCID.includes(currentDenom[0])) currentCID[1] = cleanFloat(currentCID[1] - currentDenom[1]);
+        }));
+    });
 };
 
 const isUserInputValid = (userInput) => {
@@ -69,6 +83,9 @@ const isUserInputValid = (userInput) => {
         return false;
     } else if (userInput < price) {
         alert("Customer does not have enough money to purchase the item");
+        return false;
+    } else if (userInput > cleanFloat(getTotalCID() + price)) {
+        updateOutputDisplay("Status: INSUFFICIENT_FUNDS");
         return false;
     }
 
@@ -136,12 +153,26 @@ purchaseButton.addEventListener("click", () => {
     if (!isUserInputValid(userInput)) return;
 
     getValuesFromUserInput(userInput);
+    updateValues(denominationsArray);
+
+    updateDrawerDisplay();
     updateOutputDisplay(outputMessage, denominationsArray);
-    console.log(cash);
-    console.log(change);
-    console.log(totalCID);
-    console.log(outputMessage);
-    console.log(denominationsArray);
+});
+
+inputElement.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") {
+        return;
+    }
+
+    let userInput = parseFloat(inputElement.value);
+
+    if (!isUserInputValid(userInput)) return;
+
+    getValuesFromUserInput(userInput);
+    updateValues(denominationsArray);
+
+    updateDrawerDisplay();
+    updateOutputDisplay(outputMessage, denominationsArray);
 });
 
 window.addEventListener("load", () => {
