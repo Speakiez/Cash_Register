@@ -11,7 +11,7 @@ const cidElement = document.querySelector(".cid-element");
 let cash;
 let change;
 let outputMessage;
-let denominationsArray;
+let denominationsArray = [];
 let price = 19.5;
 let cid = [
     ["PENNY", 0.01], 
@@ -43,6 +43,9 @@ const validateUserInput = (userInput) => {
     if (isNaN(userInput)) {
         alert("Please input a valid number");
         return;
+    } else if (userInput < price) {
+        alert("Customer does not have enough money to purchase the item");
+        return;
     }
 
     cash = userInput;
@@ -51,9 +54,9 @@ const validateUserInput = (userInput) => {
 
     if (change === 0) {
         outputMessage = "No change due - customer paid with exact cash";
-    } else if (!denomArray) {
+    } else if (!denominationsArray) {
         outputMessage = "Status: INSUFFICIENT_FUNDS";
-    } else if (denomArray[1] === totalCID) {
+    } else if (denominationsArray[1] === totalCID) {
         outputMessage = "Status: CLOSED";
     } else {
         outputMessage = "Status: OPEN";
@@ -87,6 +90,11 @@ const getValidDenominations = (changeCopy) => {
 
 purchaseButton.addEventListener("click", () => {
     validateUserInput(parseFloat(inputElement.value));
+
+    console.log(cash);
+    console.log(change);
+    console.log(outputMessage);
+    console.log(denominationsArray);
 });
 
 window.addEventListener("load", () => {
