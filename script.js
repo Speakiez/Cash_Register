@@ -8,30 +8,46 @@ const purchaseButton = document.querySelector(".purchase-button");
 const priceSpan = document.querySelector(".price-indicator");
 const cidElement = document.querySelector(".cid-element");
 
-let cash;
-let change;
-let outputMessage;
-let denominationsArray = [];
-let price = 19.5;
-let cid = [
-    ["PENNY", 0.01], 
-    ["NICKEL", 0], 
-    ["DIME", 0], 
-    ["QUARTER", 0.5], 
+const baseCID = [   
+    ["PENNY", 0.01],
+    ["NICKEL", 0.05],
+    ["DIME", 0.1], 
+    ["QUARTER", 0.25], 
     ["ONE", 1], 
-    ["FIVE", 0], 
-    ["TEN", 0], 
-    ["TWENTY", 0], 
-    ["ONE HUNDRED", 0]
+    ["FIVE", 5], 
+    ["TEN", 10], 
+    ["TWENTY", 20], 
+    ["ONE HUNDRED", 100]
 ];
 
-let totalCID = 
-        cid.slice()
-        .reduce((totalDenom, currentDenom) => totalDenom + currentDenom[1], 0);
+let cid = [
+    ["PENNY", 1.01], 
+    ["NICKEL", 2.05], 
+    ["DIME", 3.1], 
+    ["QUARTER", 4.25], 
+    ["ONE", 90], 
+    ["FIVE", 55], 
+    ["TEN", 20], 
+    ["TWENTY", 60], 
+    ["ONE HUNDRED", 100]
+];
+
+let price = 3.26;
+let cash;
+let change;
+let totalCID;
+let outputMessage;
+let denominationsArray = [];
+
 
 // Function Declarations //
 
 const cleanFloat = float => parseFloat((float).toFixed(2));
+
+const getTotalCID = () => totalCID = cleanFloat(
+    cid.slice()
+    .reduce((totalDenom, currentDenom) => totalDenom + currentDenom[1], 0)
+);
 
 const updateDrawerDisplay = () => {
     cidElement.innerHTML = `<strong>Change in drawer: </strong><br/>` + cid
@@ -39,18 +55,61 @@ const updateDrawerDisplay = () => {
         .join(`<br/>`);
 };
 
-const validateUserInput = (userInput) => {
+const isUserInputValid = (userInput) => {
+    inputElement.value = "";
+
     if (isNaN(userInput)) {
         alert("Please input a valid number");
-        return;
+        return false;
     } else if (userInput < price) {
         alert("Customer does not have enough money to purchase the item");
-        return;
+        return false;
     }
 
-    cash = userInput;
+    return true;
+};
+
+const getValidDenominations = (changeCopy) => {
+    const maxDenoms = [...cid].reverse();
+    const baseDenoms = [...baseCID].reverse();
+    const validDenominations = [];
+
+    baseDenoms.forEach(baseDenom => {
+        const currentDenom = [...baseDenom];
+        const indexOfDenom = baseDenoms.indexOf(baseDenom);
+        
+        if (
+            currentDenom[1] <= changeCopy && 
+            currentDenom[1] > 0
+        ) {
+            while (cleanFloat(currentDenom[1] + baseDenoms[indexOfDenom][1]) <= changeCopy) {
+                currentDenom[1] = cleanFloat(currentDenom[1] + baseDenoms[indexOfDenom][1]);
+            }
+
+            if (currentDenom[1] >= maxDenoms[indexOfDenom][1]) {
+                currentDenom[1] = maxDenoms[indexOfDenom][1];
+            } 
+
+            changeCopy = cleanFloat(changeCopy - currentDenom[1]);
+            validDenominations.push(currentDenom);
+        }
+    });
+
+    const totalDenominations = cleanFloat(
+        validDenominations.slice()
+        .reduce((totalDenom, currentDenom) => totalDenom + currentDenom[1], 0)
+    );
+
+    if (totalDenominations >= change) {
+        return [validDenominations, totalDenominations];
+    }
+};
+
+const getValuesFromUserInput = (userInput) => {
+    cash = cleanFloat(userInput);
     change = cleanFloat(cash - price);
     denominationsArray = getValidDenominations(change);
+    totalCID = getTotalCID();
 
     if (change === 0) {
         outputMessage = "No change due - customer paid with exact cash";
@@ -61,38 +120,20 @@ const validateUserInput = (userInput) => {
     } else {
         outputMessage = "Status: OPEN";
     }
-
-    inputElement.value = "";
-};
-
-const getValidDenominations = (changeCopy) => {
-    const validDenominations = cid.toReversed().map((denomination) => {
-        if (
-            denomination[1] <= changeCopy && 
-            denomination[1] > 0
-        ) {
-            changeCopy -= denomination[1];
-            return denomination;
-        }
-    })
-    .filter(array => array);
-
-    const totalDenominations = 
-        validDenominations.slice()
-        .reduce((totalDenom, currentDenom) => totalDenom + currentDenom[1], 0);
-    
-    if (totalDenominations >= change) {
-        return [validDenominations, totalDenominations];
-    }
 };
 
 // Event Handling //
 
 purchaseButton.addEventListener("click", () => {
-    validateUserInput(parseFloat(inputElement.value));
+    let userInput = parseFloat(inputElement.value);
+
+    if (!isUserInputValid(userInput)) return;
+
+    getValuesFromUserInput(userInput);
 
     console.log(cash);
     console.log(change);
+    console.log(totalCID);
     console.log(outputMessage);
     console.log(denominationsArray);
 });
