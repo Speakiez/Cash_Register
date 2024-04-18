@@ -3,7 +3,6 @@
 const inputContainer = document.querySelector(".input-container");
 const inputElement = document.getElementById("input");
 const outputContainer = document.querySelector(".output-container");
-const outputSpan = document.querySelector(".output-span");
 const purchaseButton = document.querySelector(".purchase-button");
 const priceSpan = document.querySelector(".price-indicator");
 const cidElement = document.querySelector(".cid-element");
@@ -48,6 +47,16 @@ const getTotalCID = () => totalCID = cleanFloat(
     .reduce((totalDenom, currentDenom) => totalDenom + currentDenom[1], 0)
 );
 
+const animateOutputDisplay = () => {
+    outputContainer.style.animation = "none";
+    outputContainer.style.display = "hidden";
+
+    setTimeout(() => {
+        outputContainer.style.animation = "";
+        outputContainer.style.display = "block";
+    }, 10)
+}
+
 const updateDrawerDisplay = () => {
     cidElement.innerHTML = `<strong>Change in drawer: </strong><br/>` + cid
         .map((denomination) => `${denomination[0]}: $${denomination[1]}`)
@@ -55,12 +64,14 @@ const updateDrawerDisplay = () => {
 };
 
 const updateOutputDisplay = (outputMessage, denomArray) => {
+    animateOutputDisplay();
+
     if (!denomArray) {
-        outputSpan.innerHTML = outputMessage;
+        outputContainer.innerHTML = outputMessage;
         return;
     }
 
-    outputSpan.innerHTML = `${outputMessage}<br/>` + [...denomArray[0]]
+    outputContainer.innerHTML = `${outputMessage}<br/>` + [...denomArray[0]]
         .map((denomination) => `${denomination[0]}: $${denomination[1]}`)
         .join(`<br/>`);
 };

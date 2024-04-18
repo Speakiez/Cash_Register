@@ -1,6 +1,8 @@
 :root {
-    --background-color: #4793AF;
+    --background-color: #E4C59E;
+    --output-screen: #344955;
     --light-color: #EEEEEE;
+    --receipt-color : #FFFFFF;
 }
 
 *,
@@ -28,14 +30,83 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    border-radius: 8px;
+    border-radius: 8px 0 8px 8px;
     background-color: var(--light-color);
 }
 
+.top-container {
+    display: flex;
+}
+
+.price-container {
+    height: 100px;
+    width: 300px;
+    padding: 18px 32px 8px;
+    position: relative;
+    left: 133px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px 8px 0 0;
+    background-color: var(--light-color);
+}
+
+.price-indicator {
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    color: var(--light-color);
+    background-color: var(--output-screen);
+}
+
+.output-start-line {
+    width: 220px;
+    height: 198px;
+    position: absolute;
+    transform: translate(-145px, -32px);
+    border-top: 2px solid var(--output-screen);
+    background-color: var(--light-color);
+}
+
+.output-container {
+    width: 200px;
+    height: 196px;
+    display: none;
+    position: absolute;
+    transform: translate(-145px, -230px);
+    padding: 8px;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+    background-color: var(--receipt-color);
+    animation: receiptAnimation 2s linear 1;
+}
+
+.body-container {
+
+}
+
 .input-container {
+    height: 250px;
+    width: 550px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
+    z-index: 10;
+}
+
+.bottom-container {
+
+}
+
+
+@keyframes receiptAnimation {
+    0% {
+        transform: translate(-145px, -30px);
+    }
+    100% {
+        transform: translate(-145px, -230px);
+    }
 }
