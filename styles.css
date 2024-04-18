@@ -138,7 +138,13 @@ body {
 }
 
 .bottom-container {
-
+    width: 595px;
+    height: 300px;
+    position: absolute;
+    transform: translate(0, 20px);
+    border-radius: 16px;
+    background-color: #322C2B;
+    z-index: -1;
 }
 
 
