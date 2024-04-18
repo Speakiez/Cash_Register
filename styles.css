@@ -24,6 +24,8 @@ body {
     background-color: var(--background-color);
 }
 
+/* Top Section Styles */
+
 .price-container {
     height: 100px;
     width: 300px;
@@ -71,6 +73,8 @@ body {
     background-color: var(--receipt-color);
     animation: receiptAnimation 2s linear 1;
 }
+
+/* Main Section Styles */
 
 .main-container {
     height: 250px;
@@ -150,6 +154,8 @@ body {
     z-index: 10;
 }
 
+/* Bottom Section Styles */
+
 .bottom-container {
     width: 595px;
     height: 300px;
@@ -174,6 +180,8 @@ body {
     color: var(--light-color);
     background-color: #4d4342;
 }
+
+/* Animation */
 
 @keyframes receiptAnimation {
     0% {
