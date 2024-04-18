@@ -41,7 +41,7 @@ body {
 .price-container {
     height: 100px;
     width: 300px;
-    padding: 18px 32px 8px;
+    padding: 24px 32px 8px;
     position: relative;
     left: 133px;
     display: flex;
@@ -56,6 +56,10 @@ body {
     height: 100%;
     width: 100%;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
     color: var(--light-color);
     background-color: var(--output-screen);
 }
